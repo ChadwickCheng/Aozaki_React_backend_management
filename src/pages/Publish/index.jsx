@@ -47,6 +47,12 @@ const Publish = () => {
     // 2. 调用接口
     createArticleAPI(reqData)
   }
+  // 上传图片
+  const [imageList,setImageList] = useState([])
+  const onChange = (val) => {
+    // console.log('上传图片')
+    setImageList(val.fileList)
+  }
 
   return (
     <div className="publish">
@@ -81,6 +87,30 @@ const Publish = () => {
               {/* value作为接口提交字段 */}
               {channelList.map(item=><Option value={item.id} key={item.id}>{item.name}</Option>)}
             </Select>
+          </Form.Item>
+          <Form.Item label="封面">
+            <Form.Item name="type">
+              <Radio.Group>
+                <Radio value={1}>单图</Radio>
+                <Radio value={3}>三图</Radio>
+                <Radio value={0}>无图</Radio>
+              </Radio.Group>
+            </Form.Item>
+            {/* 
+            listType选择文件框样式
+            showUploadList显示上传列表
+             */}
+            <Upload
+              name='image'
+              listType="picture-card"
+              showUploadList
+              action={'http://geek.itheima.net/v1_0/upload'}
+              onChange={onChange}
+            >
+              <div style={{ marginTop: 8 }}>
+                <PlusOutlined />
+              </div>
+            </Upload>
           </Form.Item>
           <Form.Item
             label="内容"
