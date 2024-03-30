@@ -15,7 +15,7 @@ import './index.scss'
 import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
 import { useEffect, useState } from 'react'
-import { getChannelAPI } from '@/apis/article'
+import { getChannelAPI, createArticleAPI } from '@/apis/article'
 
 const { Option } = Select
 
@@ -30,6 +30,23 @@ const Publish = () => {
     }
     getChannelList()
   },[])
+  // 表单提交
+  const onFinish = formValue => {
+    // console.log('表单提交:', formValue)
+    const { title, content, channel_id } = formValue
+    // 1. 按照文档二次处理数据
+    const reqData = {
+      title,
+      content,
+      cover:{
+        type: 0,
+        images:[]
+      },
+      channel_id
+    }
+    // 2. 调用接口
+    createArticleAPI(reqData)
+  }
 
   return (
     <div className="publish">
@@ -46,6 +63,7 @@ const Publish = () => {
           labelCol={{ span: 4 }}
           wrapperCol={{ span: 16 }}
           initialValues={{ type: 1 }}
+          onFinish={onFinish}
         >
           <Form.Item
             label="标题"
