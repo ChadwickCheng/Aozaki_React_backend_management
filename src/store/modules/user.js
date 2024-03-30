@@ -29,18 +29,18 @@ const userStore = createSlice({
 // 异步 登录获取token
 const fetchLogin = (loginForm) => {
   return async (dispatch) => {
-    // const res = await request.post('/authorizations', loginForm)
-    let res = {
-      data:{
-        token: ''
-      }
-    };
-    try {
-      res = await request.post('/authorizations', loginForm);
-    } catch (error) {
-      console.error('Request failed', error);
-      res.data.token = 'thisisfaketoken'+Math.random()
-    }
+    const res = await request.post('/authorizations', loginForm)
+    // let res = {
+    //   data:{
+    //     token: ''
+    //   }
+    // };
+    // try {
+    //   res = await request.post('/authorizations', loginForm);
+    // } catch (error) {
+    //   console.error('Request failed', error);
+    //   res.data.token = 'thisisfaketoken'+Math.random()
+    // }
     dispatch(setToken(res.data.token))
   }
 }
