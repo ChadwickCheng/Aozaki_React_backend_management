@@ -1,4 +1,4 @@
-import React from 'react'
+// import React from 'react'
 import ReactDOM from 'react-dom/client'
 import './index.scss'
 import router from './router/index.jsx'
@@ -8,10 +8,10 @@ import store from './store'
 import 'normalize.css'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
+  // <React.StrictMode>
     <Provider store={store}>
       <RouterProvider router={router}>
       </RouterProvider>
     </Provider>
-  </React.StrictMode>,
+  // </React.StrictMode>,
 )
