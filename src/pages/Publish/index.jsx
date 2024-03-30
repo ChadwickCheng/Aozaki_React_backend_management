@@ -53,6 +53,12 @@ const Publish = () => {
     // console.log('上传图片')
     setImageList(val.fileList)
   }
+  // 切换图片封面类型
+  const [imageType, setImageType] = useState(0)
+  const onTypeChange = (e) => {
+    // console.log('切换图片封面类型:', e.target.value)
+    setImageType(e.target.value)
+  }
 
   return (
     <div className="publish">
@@ -68,7 +74,7 @@ const Publish = () => {
         <Form
           labelCol={{ span: 4 }}
           wrapperCol={{ span: 16 }}
-          initialValues={{ type: 1 }}
+          initialValues={{ type: 0 }}
           onFinish={onFinish}
         >
           <Form.Item
@@ -90,7 +96,7 @@ const Publish = () => {
           </Form.Item>
           <Form.Item label="封面">
             <Form.Item name="type">
-              <Radio.Group>
+              <Radio.Group onChange={onTypeChange}>
                 <Radio value={1}>单图</Radio>
                 <Radio value={3}>三图</Radio>
                 <Radio value={0}>无图</Radio>
@@ -100,17 +106,20 @@ const Publish = () => {
             listType选择文件框样式
             showUploadList显示上传列表
              */}
-            <Upload
-              name='image'
-              listType="picture-card"
-              showUploadList
-              action={'http://geek.itheima.net/v1_0/upload'}
-              onChange={onChange}
-            >
-              <div style={{ marginTop: 8 }}>
-                <PlusOutlined />
-              </div>
-            </Upload>
+            {
+              imageType > 0 &&
+              <Upload
+                name='image'
+                listType="picture-card"
+                showUploadList
+                action={'http://geek.itheima.net/v1_0/upload'}
+                onChange={onChange}
+              >
+                <div style={{ marginTop: 8 }}>
+                  <PlusOutlined />
+                </div>
+              </Upload>
+            }
           </Form.Item>
           <Form.Item
             label="内容"
