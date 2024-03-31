@@ -17,6 +17,14 @@ export function createArticleAPI(data){
     data
   })
 }
+// 更新
+export function updateArticleAPI(data){
+  return request({
+    url: `/mp/articles/${data.id}?draft=false`,
+    method: 'PUT',
+    data
+  })
+}
 
 // 3. 获取文章列表
 export function getArticleListAPI(params){
@@ -32,5 +40,12 @@ export function deleteArticleAPI(id){
   return request({
     url: `/mp/articles/${id}`,
     method: 'DELETE'
+  })
+}
+
+// 5. 获取文章详情
+export function getArticleById(id){
+  return request({
+    url: `/mp/articles/${id}`
   })
 }

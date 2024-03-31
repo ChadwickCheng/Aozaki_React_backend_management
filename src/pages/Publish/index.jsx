@@ -11,12 +11,12 @@ import {
   message
 } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import './index.scss'
 import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
-import { useState } from 'react'
-import { createArticleAPI } from '@/apis/article'
+import { useEffect, useState } from 'react'
+import { createArticleAPI, getArticleById, updateArticleAPI } from '@/apis/article'
 import { useChannel } from '@/hooks/useChannel'
 
 const { Option } = Select
@@ -36,12 +36,23 @@ const Publish = () => {
       content,
       cover:{
         type: imageType,// 0 无图 1 单图 3 三图
-        images:imageList.map(item=>item.response.data.url) // 图片地址
+        // 编辑模式需要特别处理
+        images:imageList.map(item =>{
+          if(item.response){
+            return item.response.data.url
+          }else{
+            return item.url
+          }
+      }) // 图片地址
       },
       channel_id
     }
-    // 2. 调用接口
-    createArticleAPI(reqData)
+    // 2. 调用接口 编辑状态使用不同接口 有无id
+    if(articleId){
+      updateArticleAPI({...reqData, id: articleId})
+    }else{
+      createArticleAPI(reqData)
+    }
   }
   // 上传图片
   const [imageList,setImageList] = useState([])
@@ -55,6 +66,32 @@ const Publish = () => {
     // console.log('切换图片封面类型:', e.target.value)
     setImageType(e.target.value)
   }
+  // 回填数据
+  const [SearchParams] = useSearchParams()
+  const articleId = SearchParams.get('id')
+  // 获取实例
+  const [form] = Form.useForm()
+  useEffect(()=>{
+    // 1. 通过id获取数据
+    async function getArticleDetail(){
+      const res = await getArticleById(articleId)
+      const data = res.data
+      const {cover} = data
+      form.setFieldsValue({
+        ...data,
+        type: cover.type //回填封面直接传type
+      })
+      // 回填图片列表
+      setImageType(cover.type)
+      // 显示图片
+      setImageList(cover.images.map(url => {
+        return {url}
+      }))
+    }
+    // 有id才调用
+    articleId && getArticleDetail()
+    // 2. 调用组件实例方法
+  },[articleId, form])
 
   return (
     <div className="publish">
@@ -62,7 +99,7 @@ const Publish = () => {
         title={
           <Breadcrumb items={[
             { title: <Link to={'/'}>首页</Link> },
-            { title: '发布文章' },
+            { title: `${articleId ? '编辑' : '发布'}文章` },
           ]}
           />
         }
@@ -72,6 +109,7 @@ const Publish = () => {
           wrapperCol={{ span: 16 }}
           initialValues={{ type: 0 }}
           onFinish={onFinish}
+          form={form}
         >
           <Form.Item
             label="标题"
@@ -111,6 +149,7 @@ const Publish = () => {
                 action={'http://geek.itheima.net/v1_0/upload'}
                 onChange={onChange}
                 maxCount={imageType}
+                fileList={imageList}
               >
                 <div style={{ marginTop: 8 }}>
                   <PlusOutlined />
